@@ -3,12 +3,14 @@
 namespace App;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
     use Notifiable;
+
+    const IS_BANNED = 1;
+    const IS_ACTIVE = 0;
 
     /**
      * The attributes that are mass assignable.
@@ -16,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email',
     ];
 
     /**
@@ -29,11 +31,135 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast to native types.
+     * Relations with Departments
      *
-     * @var array
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function departments()
+    {
+        return $this->belongsToMany(
+            Department::class,
+            'department_users',
+            'user_id',
+            'department_id'
+        );
+    }
+
+    /**
+     * Add user
+     *
+     * @param $fields
+     *
+     * @return User
+     */
+    public static function add($fields)
+    {
+        $user = new static;
+        $user->fill($fields);
+        $user->save();
+
+        return $user;
+    }
+
+    /**
+     * Edit user
+     *
+     * @param $fields
+     */
+    public function edit($fields)
+    {
+        $this->fill($fields); //name,email
+
+        $this->save();
+    }
+
+    /**
+     * Generate Password
+     *
+     * @param $password
+     */
+    public function generatePassword($password)
+    {
+        if($password != null)
+        {
+            $this->password = bcrypt($password);
+            $this->save();
+        }
+    }
+
+    /**
+     * Remove User
+     *
+     * @throws \Exception
+     */
+    public function remove()
+    {
+        $this->delete();
+    }
+
+    /**
+     * Make Admin
+     */
+    public function makeAdmin()
+    {
+        $this->is_admin = 1;
+        $this->save();
+    }
+
+    /**
+     * Make Normal
+     */
+    public function makeNormal()
+    {
+        $this->is_admin = 0;
+        $this->save();
+    }
+
+    /**
+     * Toggle Admin
+     *
+     * @param $value
+     */
+    public function toggleAdmin($value)
+    {
+        if($value == null)
+        {
+            return $this->makeNormal();
+        }
+
+        return $this->makeAdmin();
+    }
+
+    /**
+     * Ban User
+     */
+    public function ban()
+    {
+        $this->status = User::IS_BANNED;
+        $this->save();
+    }
+
+    /**
+     * Unban User
+     */
+    public function unban()
+    {
+        $this->status = User::IS_ACTIVE;
+        $this->save();
+    }
+
+    /**
+     * Toggle Ban
+     *
+     * @param $value
+     */
+    public function toggleBan($value)
+    {
+        if($value == null)
+        {
+            return $this->unban();
+        }
+
+        return $this->ban();
+    }
 }
