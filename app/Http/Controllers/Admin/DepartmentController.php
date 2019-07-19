@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Department;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -14,7 +16,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        //
+        return view('admin.department.index');
     }
 
     /**
@@ -24,18 +26,34 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        //
+        $users = User::pluck('name', 'id')->all();
+
+        return view('admin.department.create', compact(
+            'users'
+        ));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' =>'required',
+            'description'   =>  'required',
+            'logo' =>  'nullable|image'
+        ]);
+
+        $department = Department::add($request->all());
+        $department->uploadLogo($request->file('logo'));
+        $department->setUsers($request->get('users'));
+
+        return redirect()->route('department.index');
     }
 
     /**

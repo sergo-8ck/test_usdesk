@@ -18,6 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::group(['prefix'=>'admin','namespace'=>'Admin', 'middleware'	=>	'admin'], function(){
-    Route::resource('/', 'DepartmentController');
+    Route::get('/', 'DepartmentController@index');
+    Route::resource('/department', 'DepartmentController');
     Route::resource('/users', 'UsersController');
 });

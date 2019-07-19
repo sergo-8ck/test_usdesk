@@ -86,7 +86,7 @@ class Department extends Model
     {
         if($this->logo != null)
         {
-            Storage::delete('logo/' . $this->logo);
+            Storage::delete('/public/logo/' . $this->logo);
         }
     }
 
@@ -101,7 +101,7 @@ class Department extends Model
 
         $this->removeLogo();
         $filename = str_random(10) . '.' . $logo->extension();
-        $logo->storeAs('logo', $filename);
+        $logo->storeAs('public/logo', $filename);
         $this->logo = $filename;
         $this->save();
     }
@@ -115,9 +115,16 @@ class Department extends Model
     {
         if($this->logo == null)
         {
-            return '/logo/no-image.png';
+            return '/public/logo/no-image.png';
         }
 
-        return '/logo/' . $this->logo;
+        return '/public/logo/' . $this->logo;
+    }
+
+    public function setUsers($ids)
+    {
+        if($ids == null){return;}
+
+        $this->users()->sync($ids);
     }
 }
