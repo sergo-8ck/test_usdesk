@@ -3,7 +3,7 @@
 @section('content')
 <div class="card-header">
     Section
-    <a class="btn btn-primary float-right" href="#" role="button">Add</a>
+    <a class="btn btn-primary float-right" href="{{route('department.create')}}" role="button">Add</a>
 </div>
 
 <div class="card-body">
@@ -12,23 +12,23 @@
             {{ session('status') }}
         </div>
     @endif
-
     <table class="table">
         <tbody>
+        @foreach($departments as $department)
         <tr>
             <td>
-                <img src="/storage/logo/krasot.jpg" class="img-thumbnail" alt="Responsive image" width="150">
+                <img src="/storage/logo/{{ $department->logo }}" class="img-thumbnail" alt="Responsive image" width="150">
             </td>
             <td>
-                <strong>Department 1</strong>
-                <div>oeuaoeuaoeuaoe uoe uaoeu aoeu aoeu aoe uaoeu </div>
+                <strong>{{ $department->name }}</strong>
+                <div>{{ $department->description }}</div>
             </td>
             <td>
                 <strong>Users</strong>
                 <ul>
-                    <li>User 1</li>
-                    <li>User 2</li>
-                    <li>User 3</li>
+                    @foreach($department->users as $user)
+                        <li>{{ $user->name }}</li>
+                    @endforeach
                 </ul>
             </td>
             <td>
@@ -36,43 +36,7 @@
                 <button type="button" class="btn btn-danger btn-sm">Danger</button>
             </td>
         </tr>
-        <tr>
-            <td><img src="/storage/logo/krasot.jpg" class="img-thumbnail" alt="Responsive image" width="150"></td>
-            <td>
-                <strong>Department 2</strong>
-                <div>oeuaoeuaoeuaoe uoe uaoeu aoeu aoeu aoe uaoeu </div></td>
-            <td>
-                <strong>Users</strong>
-                <ul>
-                    <li>User 1</li>
-                    <li>User 2</li>
-                    <li>User 3</li>
-                </ul>
-            </td>
-            <td>
-                <a class="btn btn-secondary btn-sm" href="#" role="button">Edit</a>
-                <button type="button" class="btn btn-danger btn-sm">Danger</button>
-            </td>
-        </tr>
-        <tr>
-            <td><img src="/storage/logo/krasot.jpg" class="img-thumbnail" alt="Responsive image" width="150"></td>
-            <td>
-                <strong>Department 3</strong>
-                <div>oeuaoeuaoeuaoe uoe uaoeu aoeu aoeu aoe uaoeu </div>
-            </td>
-            <td>
-                <strong>Users</strong>
-                <ul>
-                    <li>User 1</li>
-                    <li>User 2</li>
-                    <li>User 3</li>
-                </ul>
-            </td>
-            <td>
-                <a class="btn btn-secondary btn-sm" href="#" role="button">Edit</a>
-                <button type="button" class="btn btn-danger btn-sm">Danger</button>
-            </td>
-        </tr>
+        @endforeach
         </tbody>
     </table>
 
