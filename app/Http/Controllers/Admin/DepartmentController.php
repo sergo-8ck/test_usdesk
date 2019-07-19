@@ -16,7 +16,8 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::all();
+        $departments = Department::paginate(2);
+
         return view('admin.department.index', ['departments'=>$departments]);
     }
 
@@ -58,17 +59,6 @@ class DepartmentController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -76,7 +66,7 @@ class DepartmentController extends Controller
      */
     public function edit($id)
     {
-        //
+        dd($id);
     }
 
     /**
