@@ -115,10 +115,10 @@ class Department extends Model
     {
         if($this->logo == null)
         {
-            return '/public/logo/no-image.png';
+            return '/storage/logo/no-image.png';
         }
 
-        return '/public/logo/' . $this->logo;
+        return '/storage/logo/' . $this->logo;
     }
 
     public function setUsers($ids)

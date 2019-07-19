@@ -66,19 +66,40 @@ class DepartmentController extends Controller
      */
     public function edit($id)
     {
-        dd($id);
+        $department = Department::find($id);
+        $users = User::pluck('name', 'id')->all();
+        $selectedUsers = $department->users->pluck('id')->all();
+
+        return view('admin.department.edit', compact(
+            'users',
+            'department',
+            'selectedUsers'
+        ));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'name' =>'required',
+            'description'   =>  'required',
+            'logo' =>  'nullable|image'
+        ]);
+
+        $department = Department::find($id);
+        $department->edit($request->all());
+        $department->uploadLogo($request->file('logo'));
+        $department->setUsers($request->get('users'));
+
+        return redirect()->route('department.index');
     }
 
     /**
@@ -89,6 +110,8 @@ class DepartmentController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Department::find($id)->remove();
+
+        return redirect()->route('department.index');
     }
 }
