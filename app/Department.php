@@ -115,7 +115,7 @@ class Department extends Model
     {
         if($this->logo == null)
         {
-            return '/storage/logo/no-image.png';
+            return '/storage/logo/logo1.png';
         }
 
         return '/storage/logo/' . $this->logo;
