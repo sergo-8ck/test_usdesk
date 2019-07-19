@@ -3,7 +3,6 @@
 @section('content')
     <div class="card-header">
         Section
-        <a class="btn btn-primary float-right" href="#" role="button">Add</a>
     </div>
     <div class="card-body">
         {{Form::open([

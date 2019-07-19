@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rule;
 
 class UsersController extends Controller
 {
@@ -14,7 +16,8 @@ class UsersController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::paginate(4);
+        return view('admin.users.index', ['users'   =>  $users]);
     }
 
     /**
@@ -24,29 +27,29 @@ class UsersController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.users.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
-        //
-    }
+        $this->validate($request, [
+            'name'  =>  'required',
+            'email' =>  'required|email|unique:users',
+            'password'  =>  'required',
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+        $user = User::add($request->all());
+        $user->generatePassword($request->get('password'));
+
+        return redirect()->route('user.index');
     }
 
     /**
@@ -57,19 +60,36 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::find($id);
+        return view('admin.users.edit', compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+
+        $this->validate($request, [
+            'name'  =>  'required',
+            'email' =>  [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($user->id),
+            ]
+        ]);
+
+        $user->edit($request->all()); //name,email
+        $user->generatePassword($request->get('password'));
+
+        return redirect()->route('user.index');
     }
 
     /**
@@ -80,6 +100,8 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
-        //
+        User::find($id)->remove();
+
+        return redirect()->route('user.index');
     }
 }
